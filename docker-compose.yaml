@@ -1,0 +1,35 @@
+version: "3"
+services:
+  app:
+    build: .
+    container_name: app
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+    environment:
+      TZ: "Europe/Istanbul"
+      PORT: 8081
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: root
+      RABBITMQ_PASS: root
+      RABBITMQ_QUEUE_NAME: msgqueue
+    ports:
+      - "8081:8081"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Istanbul"
+      RABBITMQ_ERLANG_COOKIE: "cookie"
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: root
+      #volumes:
+      # - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
+      # - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
+      # - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+    ports:
+      - 5672:5672 #uygulaammızın bağlanacağı port ampq port
+      - 15672:15672 #managment portu
